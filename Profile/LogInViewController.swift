@@ -73,7 +73,7 @@ class LogInViewController: UIViewController {
         stack.clipsToBounds = true
         return stack
     }()
-    
+//    ddd
     
     lazy var textfieldOne: MyTextField = {
         let textField = MyTextField()
