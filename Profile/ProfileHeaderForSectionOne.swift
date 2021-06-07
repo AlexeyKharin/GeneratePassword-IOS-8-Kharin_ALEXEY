@@ -8,7 +8,6 @@
 import UIKit
 
 
-
 final class ProfileHeaderForSectionOne: UITableViewHeaderFooterView {
     var profileHeder: PostContent? {
         didSet {
