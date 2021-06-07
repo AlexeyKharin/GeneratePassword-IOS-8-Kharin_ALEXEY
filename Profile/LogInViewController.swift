@@ -7,6 +7,26 @@
 
 import UIKit
 
+class CustomOperation: Operation {
+    let doBlock: LogInViewController
+    let rotate: () -> Void
+    override var isAsynchronous: Bool {
+        return false
+    }
+    
+    init(doBlock: LogInViewController, rotate: @escaping () -> Void) {
+        self.doBlock = doBlock
+        self.rotate = rotate
+        
+        super.init()
+    }
+    override func main() {
+        rotate()
+        doBlock.generatePswd.bruteForce(passwordToUnlock: "2o!")
+        
+    }
+}
+
 class LogInViewController: UIViewController {
     
     var generatePswd = GeneratePassword()
@@ -55,11 +75,20 @@ class LogInViewController: UIViewController {
         button.addTarget(self, action: #selector(generate), for: .touchUpInside)
         return button
     }()
+    lazy var generat = CustomOperation(doBlock: self) {
+        self.indicate.startAnimating()
+    }
+    var switcher: Bool = true
     
     @objc func generate () {
-        generatePswd.generate()
-        indicate.startAnimating()
-        
+        if switcher {
+        generat.main()
+        switcher.toggle()
+        } else {
+            generat.cancel()
+            indicate.stopAnimating()
+            switcher.toggle()
+        }
     }
     
     var stack: UIStackView = {
@@ -124,7 +153,7 @@ class LogInViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         generatePswd.textDidChangedHandler = { [weak self] text in
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
             self?.textfieldOne.text = text
             self?.indicate.stopAnimating()
             self?.textfieldOne.isSecureTextEntry = false
